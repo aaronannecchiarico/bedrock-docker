@@ -1,4 +1,4 @@
-FROM php:8.0-fpm as base
+FROM php:8.2-fpm as base
 LABEL name=bedrock
 LABEL intermediate=true
 
@@ -22,7 +22,7 @@ FROM base as php
 LABEL name=bedrock
 LABEL intermediate=true
 
-# Install php extensions and related packages
+# Install php extensions including xdebug and related packages
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 RUN chmod +x /usr/local/bin/install-php-extensions && sync \
   && install-php-extensions \
@@ -50,11 +50,18 @@ RUN chmod +x /usr/local/bin/install-php-extensions && sync \
   && rm -rf /var/lib/apt/lists/* \
   && apt-get clean
 
+# Install xdebug
+RUN pecl install xdebug \
+  && docker-php-ext-enable xdebug
+
 FROM php as bedrock
 LABEL name=bedrock
 
-# Install nginx & supervisor
-RUN curl -sL https://deb.nodesource.com/setup_16.x | bash \
+RUN apt-get update \
+  && apt-get install -y ca-certificates curl gnupg \
+  && mkdir -p /etc/apt/keyrings \
+  && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
+  && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_18.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list \
   && apt-get update \
   && apt-get install -y \
     nginx \
@@ -69,7 +76,9 @@ RUN curl -sL https://deb.nodesource.com/setup_16.x | bash \
 COPY ./build/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./build/nginx/sites-enabled /etc/nginx/conf.d
 COPY ./build/nginx/sites-enabled /etc/nginx/sites-enabled
-COPY ./build/php/8.0/fpm/pool.d /etc/php/8.0/fpm/pool.d
+COPY ./build/php/8.2/fpm/pool.d /etc/php/8.2/fpm/pool.d
+COPY ./build/php/8.2/conf.d/xdebug.ini /etc/php/conf.d/xdebug.ini
+COPY ./build/php/8.2/conf.d/error_reporting.ini /etc/php/conf.d/error_reporting.ini
 COPY ./build/supervisor/supervisord.conf /etc/supervisord.conf
 
 # WordPress CLI
