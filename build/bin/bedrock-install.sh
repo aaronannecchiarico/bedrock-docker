@@ -7,10 +7,10 @@ cd /srv/bedrock
 composer install
 
 wp core install --url=$WP_HOME \
-  --title=bedrock \
-  --admin_user=dev \
-  --admin_email=admin@example.com \
-  --admin_password=dev
+  --title=$WP_SITE_TITLE \
+  --admin_user=$WP_ADMIN_USER \
+  --admin_email=$WP_ADMIN_EMAIL \
+  --admin_password=$WP_ADMIN_PASSWORD \
 
 wp package install aaemnnosttv/wp-cli-login-command \
   || echo 'wp-cli-login-command is already installed'

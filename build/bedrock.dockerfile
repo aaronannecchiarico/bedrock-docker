@@ -76,7 +76,7 @@ RUN apt-get update \
 COPY ./build/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./build/nginx/sites-enabled /etc/nginx/conf.d
 COPY ./build/nginx/sites-enabled /etc/nginx/sites-enabled
-COPY ./build/php/8.2/fpm/pool.d /etc/php/8.2/fpm/pool.d
+COPY ./build/php/8.2/fpm/development/pool.d /etc/php/8.2/fpm/pool.d
 COPY ./build/php/8.2/conf.d/xdebug.ini /etc/php/conf.d/xdebug.ini
 COPY ./build/php/8.2/conf.d/error_reporting.ini /etc/php/conf.d/error_reporting.ini
 COPY ./build/supervisor/supervisord.conf /etc/supervisord.conf

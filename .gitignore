@@ -2,3 +2,4 @@ bedrock
 .DS_Store
 .idea
 .vscode
+.env.*
